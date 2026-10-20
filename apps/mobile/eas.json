@@ -10,15 +10,15 @@
       "distribution": "internal",
       "android": { "buildType": "apk" },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://REPLACE-ME.onrender.com",
-        "EXPO_PUBLIC_API_KEY": ""
+        "EXPO_PUBLIC_API_URL": "https://sentinel-sms.onrender.com", 
+        "EXPO_PUBLIC_API_KEY": "8c9CEfTL-Lgkizz5n_aLEDZFbv2Syk84ZRvZDv4KO6WZfT3ebKySzbIfV9DKyZV7pnA"
       }
     },
     "production": {
       "android": { "buildType": "app-bundle" },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://REPLACE-ME.onrender.com",
-        "EXPO_PUBLIC_API_KEY": ""
+        "EXPO_PUBLIC_API_URL": "https://sentinel-sms.onrender.com",
+        "EXPO_PUBLIC_API_KEY": "8c9CEfTL-Lgkizz5n_aLEDZFbv2Syk84ZRvZDv4KO6WZfT3ebKySzbIfV9DKyZV7pnA"
       }
     }
   },

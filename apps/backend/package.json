@@ -1,0 +1,12 @@
+{
+  "name": "@sentinel/backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Django REST backend (thin npm wrappers so Turborepo can orchestrate it). Activate your Python venv first.",
+  "scripts": {
+    "dev": "python manage.py runserver 0.0.0.0:8000",
+    "migrate": "python manage.py migrate",
+    "test": "python manage.py test",
+    "typecheck": "python manage.py check"
+  }
+}

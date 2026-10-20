@@ -1,0 +1,29 @@
+{
+  "name": "sms-sentinel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SMS Sentinel - Spot suspicious SMS before you click",
+  "packageManager": "npm@10.8.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "mobile": "npm run start --workspace @sentinel/mobile",
+    "mobile:android": "npm run android --workspace @sentinel/mobile",
+    "backend": "npm run dev --workspace @sentinel/backend",
+    "backend:migrate": "npm run migrate --workspace @sentinel/backend",
+    "sync:rules": "node scripts/sync-rules.mjs",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "doctor": "node scripts/doctor.mjs"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0"
+  },
+  "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-is": "19.1.0"
+  }
+}

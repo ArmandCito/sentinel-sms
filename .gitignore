@@ -1,0 +1,29 @@
+# deps
+node_modules/
+.turbo/
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+db.sqlite3
+staticfiles/
+# env / secrets
+.env
+.env.*
+!.env.example
+# expo / native
+.expo/
+dist/
+web-build/
+apps/mobile/android/
+apps/mobile/ios/
+*.apk
+*.aab
+*.keystore
+*.jks
+# os / ide
+.DS_Store
+.idea/
+.vscode/
+*.log

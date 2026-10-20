@@ -1,0 +1,26 @@
+# Render Blueprint (optional). Database is NOT created here: use a free Neon database
+# (Render's free Postgres expires after ~30 days) and paste its URL as DATABASE_URL.
+services:
+  - type: web
+    name: sms-sentinel-api
+    runtime: python
+    plan: free
+    rootDir: apps/backend
+    buildCommand: ./build.sh
+    startCommand: gunicorn sentinel.wsgi:application --workers 2 --timeout 30
+    healthCheckPath: /api/health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: AI_PROVIDER
+        value: gemini
+      - key: AI_API_KEY
+        sync: false
+      - key: APP_API_KEY
+        sync: false

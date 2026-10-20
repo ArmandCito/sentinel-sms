@@ -8,9 +8,13 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0B0F17",
-    "platforms": ["android"],
+    "platforms": [
+      "android"
+    ],
     "newArchEnabled": true,
-    "experiments": { "tsconfigPaths": true },
+    "experiments": {
+      "tsconfigPaths": true
+    },
     "android": {
       "package": "com.smssentinel.app",
       "versionCode": 1,
@@ -47,6 +51,13 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dbfb1427-1b97-4bf4-ae5a-a6813e06f1f0"
+      }
+    },
+    "owner": "armandcito"
   }
 }

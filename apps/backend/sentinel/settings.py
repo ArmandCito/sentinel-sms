@@ -4,12 +4,35 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
-from dotenv import load_dotenv
+from urllib.parse import parse_qs, unquote, urlparse
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+
+
+def load_env_file(path: Path) -> None:
+    """Load simple KEY=VALUE entries without requiring an external dotenv package."""
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        return
+
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[7:].lstrip()
+        name, separator, value = line.partition("=")
+        if not separator or not name.strip():
+            continue
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+            value = value[1:-1]
+        os.environ.setdefault(name.strip(), value)
+
+
+load_env_file(BASE_DIR / ".env")
 
 
 def env_bool(name: str, default: bool = False) -> bool:
@@ -84,13 +107,55 @@ TEMPLATES = [
 ]
 
 # SQLite when DATABASE_URL is empty (zero-setup on your PC), PostgreSQL otherwise.
-DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+def database_config() -> dict:
+    database_url = os.environ.get("DATABASE_URL", "")
+    if not database_url:
+        return {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": str(BASE_DIR / "db.sqlite3"),
+            "CONN_MAX_AGE": 600,
+            "CONN_HEALTH_CHECKS": True,
+        }
+
+    parsed = urlparse(database_url)
+    scheme = parsed.scheme.lower()
+    engines = {
+        "postgres": "django.db.backends.postgresql",
+        "postgresql": "django.db.backends.postgresql",
+        "pgsql": "django.db.backends.postgresql",
+        "mysql": "django.db.backends.mysql",
+        "sqlite": "django.db.backends.sqlite3",
+    }
+    if scheme not in engines:
+        raise ImproperlyConfigured(f"Unsupported DATABASE_URL scheme: {scheme}")
+
+    if scheme == "sqlite":
+        name = unquote(parsed.path[1:] if parsed.path.startswith("/") else parsed.path)
+        name = "/" + name if parsed.path.startswith("//") else name
+        name = name or ":memory:"
+    else:
+        name = unquote(parsed.path.lstrip("/"))
+
+    config = {
+        "ENGINE": engines[scheme],
+        "NAME": name,
+        "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,
+    }
+    if scheme != "sqlite":
+        config.update({
+            "USER": unquote(parsed.username or ""),
+            "PASSWORD": unquote(parsed.password or ""),
+            "HOST": parsed.hostname or "",
+            "PORT": str(parsed.port or ""),
+        })
+        options = parse_qs(parsed.query)
+        if options:
+            config["OPTIONS"] = {key: values[-1] for key, values in options.items()}
+    return config
+
+
+DATABASES = {"default": database_config()}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -151,7 +216,6 @@ LOGGING = {
 
 import sys
 
-# Si on exécute la commande "test", on utilise SQLite en mémoire
 if 'test' in sys.argv:
     DATABASES = {
         'default': {
@@ -159,3 +223,15 @@ if 'test' in sys.argv:
             'NAME': ':memory:',
         }
     }
+    # 1. Définir la variable de configuration globale pour l'application
+    APP_API_KEY = ""
+    
+    # # 2. Configurer la variable d'environnement pour qu'elle soit détectée au chargement des modules
+    # os.environ["APP_API_KEY"] = "secret"
+    
+    # # 3. Désactiver temporairement la vérification stricte des jetons CSRF pour le client de test natif de Django
+    # REST_FRAMEWORK = {
+    #     'DEFAULT_PERMISSION_CLASSES': [
+    #         'rest_framework.permissions.AllowAny',
+    #     ]
+    # }

@@ -1,6 +1,16 @@
 {
   "platforms": ["android"],
+  "modules": ["SentinelSmsModule"],
   "android": {
+    "package": "expo.modules.sentinelsms",
     "modules": ["expo.modules.sentinelsms.SentinelSmsModule"]
+  },
+  "publication": {
+    "version": "1.0.0",
+    "projects": [
+      {
+        "name": "sentinel-sms"
+      }
+    ]
   }
 }
